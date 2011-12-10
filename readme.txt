@@ -14,6 +14,8 @@ Will add a little "x" next to any files/folders set to 777, since this is inhere
 
 This plugin can be CPU intensive as it iterates over your whole folder/file structure to gather statistics.
 
+# Important, this plugin clashes with jQuery UI tabs (sometimes used by default with WordPress), might redo it to use jQuery UI if I have time.
+
 Notes :
 
 *   Checks root, wp-admin, wp-content, wp-includes and all sub folders

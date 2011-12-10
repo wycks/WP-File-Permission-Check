@@ -40,19 +40,19 @@ function fpc_load_custom_perm_scripts() {
 //add_action( 'admin_print_styles',  'load_admin_perm_styles' );
 add_action( 'init',  'fpc_load_admin_perm_styles' );
 function fpc_load_admin_perm_styles(){
-	
+
 	if( (is_admin() ) && (isset($_GET['page']) == "perm_check") ){
 	  wp_enqueue_style('jquery-style');
 	  wp_enqueue_script('my-jquery-ui');
 	  wp_enqueue_script('my-perm-js');
-	  
+
 	  }
     }
 
 // load menu
 add_action( 'admin_menu', 'fpc_wp_fileperm_show');
 function fpc_wp_fileperm_show(){
-	
+
        $menu_label = "File Permission Checker";
        add_options_page( 'show perm', $menu_label, 'activate_plugins', 'perm_check', 'fpc_permy_file_check');
 }
@@ -61,7 +61,7 @@ function fpc_wp_fileperm_show(){
 //main function lot's of tables and tabs ;)
 
 function fpc_permy_file_check(){
-	
+
 	//global base root dir
 	$base = ABSPATH; ?>
 	
@@ -117,32 +117,32 @@ function fpc_permy_file_check(){
      
                     //get file extension
                     $filetype = pathinfo($fileinfo, PATHINFO_EXTENSION);
-		    
+
 		    // get permissions in octal
 		    $stringy = substr(sprintf('%o', $fileinfo->getPerms()), -4);
 		    ?>
 
                     </tr>
                    <?php if (!in_array(strtolower($filetype), $filetypes)) {
-			
+
 			  //output file name
 			echo "<td>" . $fileinfo . "</td>";
-			
-			
+
+
 		          //check for 777 ! and outputs perms
-			  
+
 		           if  ($stringy == '0777'){
 		                echo "<td>" . substr(sprintf('%o', $fileinfo->getPerms()), -4) .
 				"<span class='red'> &#215; </span>" . "</td>" ;
 		           }else{
 			        echo "<td>" . substr(sprintf('%o', $fileinfo->getPerms()), -4) .  "</td>" ;
 		           }
-		     
-		    
+
+
 			     //output file sizes
 		             echo "<td>" . number_format($fileinfo->getSize()/1024, 2) . " KB" . "</td>";
-		     
-		
+
+
 		   }
 		}
 	}?>
@@ -170,7 +170,7 @@ function fpc_permy_file_check(){
       $it = new RecursiveDirectoryIterator($base . "wp-admin");
       
            foreach(new RecursiveIteratorIterator($it) as $file) {
-	  
+
 	    $filetype = pathinfo($file, PATHINFO_EXTENSION);
 	    $stringy = substr(sprintf('%o', $fileinfo->getPerms()), -4);
 	    ?>
@@ -178,20 +178,20 @@ function fpc_permy_file_check(){
             </tr>
       
               <?php if (!in_array(strtolower($filetype), $filetypes)) {
-		
+
                  echo "<td>" . $file . "</td>";
-		 
+
 		 //check for 777 !
-			  
+
 		           if  ($stringy == '0777'){
 		                echo "<td>" . substr(sprintf('%o', $fileinfo->getPerms()), -4) .
 				"<span class='red'> &#215; </span>" . "</td>" ;
 		           }else{
 			        echo "<td>" . substr(sprintf('%o', $fileinfo->getPerms()), -4) .  "</td>" ;
 		           }
-			   
+
 		                echo "<td>" . number_format($file->getSize()/1024, 2) . " KB" . "</td>";
-		
+
 	      }
 	   }?>
     
@@ -219,7 +219,7 @@ function fpc_permy_file_check(){
       $it = new RecursiveDirectoryIterator($base . "wp-content");
       
            foreach(new RecursiveIteratorIterator($it) as $file) {
-	  
+
 	    $filetype = pathinfo($file, PATHINFO_EXTENSION);
 	    $stringy = substr(sprintf('%o', $fileinfo->getPerms()), -4);
 	    ?>
@@ -227,20 +227,20 @@ function fpc_permy_file_check(){
             </tr>
       
               <?php if (!in_array(strtolower($filetype), $filetypes)) {
-		
+
                  echo "<td>" . $file . "</td>";
-		 
+
 		 //check for 777 !
-			  
+
 		           if  ($stringy == '0777'){
 		                echo "<td>" . substr(sprintf('%o', $fileinfo->getPerms()), -4) .
 				"<span class='red'> &#215; </span>" . "</td>" ;
 		           }else{
 			        echo "<td>" . substr(sprintf('%o', $fileinfo->getPerms()), -4) .  "</td>" ;
 		           }
-			   
+
 		                echo "<td>" . number_format($file->getSize()/1024, 2) . " KB" . "</td>";
-		
+
 	      }
 	   }?>
 
@@ -267,28 +267,28 @@ function fpc_permy_file_check(){
       $it = new RecursiveDirectoryIterator($base . "wp-includes");
       
            foreach(new RecursiveIteratorIterator($it) as $file) {
-	  
+
 	    $filetype = pathinfo($file, PATHINFO_EXTENSION);
 	    $stringy = substr(sprintf('%o', $fileinfo->getPerms()), -4); ?>
     
             </tr>
       
               <?php if (!in_array(strtolower($filetype), $filetypes)) {
-		
+
                  echo "<td>" . $file . "</td>";
-		 
+
 		 //check for 777 !
-			  
+
 		           if  ($stringy == '0777'){
 		                echo "<td>" . substr(sprintf('%o', $fileinfo->getPerms()), -4) .
 				"<span class='red'> &#215; </span>" . "</td>" ;
 		           }else{
 			        echo "<td>" . substr(sprintf('%o', $fileinfo->getPerms()), -4) .  "</td>" ;
 		           }
-			   
-		 
+
+
 		 echo "<td>" . number_format($file->getSize()/1024, 2) . " KB" . "</td>";
-		
+
 	      }
 	   }?>
 
@@ -303,6 +303,7 @@ function fpc_permy_file_check(){
 	<li>This scan is CPU intensive, images are ommited.</li>
 	<li>If this is deemed useful I can optimize it better by re-writing some of the code</li>
 	<li>Follow wpsecure.net's twitter feed for security updates <a href="https://twitter.com/#!/wpsecurenet">https://twitter.com/#!/wpsecurenet</a></li>
+        <li>Important, this plugin clashes with jQuery UI tabs (sometimes used by default with WordPress), might redo it to use jQuery UI if I have time.</li>
 	</ul>
 	
 </div>
