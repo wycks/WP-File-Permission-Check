@@ -1,32 +1,30 @@
 === Plugin Name ===
 Contributors: wycks
 Donate link: http://wordpressfoundation.org
-Tags: file, folders, size, permissions, check, 777
+Tags: file, folders, size, permissions, check, 777, last modified
 Requires at least: 2.8
-Tested up to: 3.3
-Stable tag: 1.0.2
+Tested up to: 3.5.1
+Stable tag: 3.5.1
 
-Simple plugin that checks your WordPress install and shows your file permissions and sizes. 
+Simple plugin that checks your WordPress install and shows your file permissions, size, and last modified date. 
 
 == Description ==
 
 Will add a little "x" next to any files/folders set to 777, since this is inherently insecure. Checks all recursive folders that come with a default WordPress install.
 
-This plugin can be CPU intensive as it iterates over your whole folder/file structure to gather statistics.
+Will exclude the "/cache" folder since they are used by caching plugins and contains to many files to scan.
 
-# Important, this plugin clashes with jQuery UI tabs (sometimes used by default with WordPress), might redo it to use jQuery UI if I have time.
+This plugin can be CPU intensive as it iterates over your whole folder/file structure to gather statistics.
 
 Notes :
 
 *   Checks root, wp-admin, wp-content, wp-includes and all sub folders
 *   Includes your plugin and theme folders
-*   Ignores images, text and CSS files
+*   Ignores images, text, CSS , and translation files
 *   Requires PHP 5.1.2 or greater
 
 
-    Note that this runs on menu load ( when you click "File Permissions") and can be CPU intensive since it scans and gathers data on all your files.
     Please run this during low traffic.
-    It will not show image files to reduce scan time and CPU usage ( will make a separate plugin if anyone needs this).
     This plugin will not return accurate results under IIS or WAMP stack due to how windows handles file permissions.
     
     
@@ -59,9 +57,9 @@ Yes but the permissions are not the same as Linux/Unix.
 
 == Changelog ==
 
-1.0.2 
-- Fixed Some issues with broken style/script link
-- Updated enqueue script for 3.3
+1.04  - Completely re-wrote the plugin from scratch
+1.03  - Removed Jquery.tools and replaced with jQuery.UI
+1.02  - fixed directory problem for loading CSS and
 
 == Upgrade Notice ==
 
