@@ -48,7 +48,7 @@ add_action( 'admin_enqueue_scripts', 'load_admin_scripts_fpc' );
 			wp_enqueue_script('jquery-ui-tabs');
 			wp_enqueue_script('jquery-ui-widget');
 
-            add_action( 'admin_footer', 'load_tab_script_Fpc' );
+                 add_action( 'admin_footer', 'load_tab_script_Fpc' );
 	    }
 	}
 
