@@ -11,7 +11,7 @@ class FpcDirFilter extends RecursiveFilterIterator
 {
     public function accept()
     {
-        $excludes = array("cache");
+        $excludes = array("cache", "objectcache", "pgcache", "dbcache");
         return !($this->isDir() && in_array($this->getFilename(), $excludes));
     }
     

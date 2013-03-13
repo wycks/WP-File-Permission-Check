@@ -12,8 +12,6 @@ Simple plugin that checks your WordPress install and shows your file permissions
 
 Will add a little "x" next to any files/folders set to 777, since this is inherently insecure. Checks all recursive folders that come with a default WordPress install.
 
-Will exclude the "/cache" folder since they are used by caching plugins and contains to many files to scan.
-
 This plugin can be CPU intensive as it iterates over your whole folder/file structure to gather statistics.
 
 Notes :
@@ -21,11 +19,11 @@ Notes :
 *   Checks root, wp-admin, wp-content, wp-includes and all sub folders
 *   Includes your plugin and theme folders
 *   Ignores images, text, CSS , and translation files
+*   Will exclude the cache folders since they contain to many files to scan.
 *   Requires PHP 5.1.2 or greater
-
-
-    Please run this during low traffic.
-    This plugin will not return accurate results under IIS or WAMP stack due to how windows handles file permissions.
+*   Please run this during low traffic.
+    
+**This plugin will not return accurate results under IIS or WAMP stack due to how windows handles file permissions.**
     
     
 
@@ -33,11 +31,7 @@ Notes :
 
 This section describes how to install the plugin and get it working.
 
-1. Create a folder in your  `/wp-content/plugins/` called `/file-permission-checker`
-1. Upload `file-perm-check.php` and `file-perm-check.css` to the `/wp-content/plugins/file-permission-checker` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-
-Or just use the Auto Installer.
 
 
 == Frequently Asked Questions ==
@@ -48,7 +42,7 @@ I don't know, sometimes people want to see their permissions I guess.
 
 = Will this work on Windows =
 
-Yes but the permissions are not the same as Linux/Unix.
+Yes but the permissions are not accurate.
 
 == Screenshots ==
 

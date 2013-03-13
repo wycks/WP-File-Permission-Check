@@ -5,7 +5,7 @@ Plugin URI: http://www.wpsecure.net/
 Description: Checks WordPress file permissions, file size and last modified date
 Author: Wycks
 Author URI: http://wordpress.org/extend/plugins/profile/wycks
-Version: 1.0.4.2
+Version: 1.0.4
 License: GPL2
 ****/
 

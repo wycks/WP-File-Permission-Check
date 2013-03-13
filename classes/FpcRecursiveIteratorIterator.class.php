@@ -41,7 +41,6 @@ class FpcRecursiveDirectoryIteratorReader
                     * 
                     */
                     $filetype = pathinfo($fileinfo, PATHINFO_EXTENSION);
-                    $dirtype = pathinfo($fileinfo, PATHINFO_DIRNAME);
                     $octal = substr(sprintf('%o', $fileinfo->getPerms()), -4);
                     $timestamp = date("F j, Y, g:i a", $fileinfo->getMTime());
                     $filesize = number_format($fileinfo->getSize() / 1024, 2) . " KB";
@@ -51,9 +50,9 @@ class FpcRecursiveDirectoryIteratorReader
                     if (!in_array(strtolower($filetype), $filetypes)) {
 
                         if (is_dir($fileinfo )){
-                            echo "<td><b>" . $fileinfo . "</b></td>";
+                            echo "<td><b>" . $fileinfo->getFilename() . "/</b></td>";
                         }else{
-                            echo "<td>" . $fileinfo . "</td>";
+                            echo "<td>" . $fileinfo->getFilename() . "</td>";
                         }
                         
                         //check for 777

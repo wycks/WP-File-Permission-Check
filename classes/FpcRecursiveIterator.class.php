@@ -44,9 +44,9 @@ class FpcRecursiveDirectoryReader
 
                         //check if it's a dir or a file
                         if (is_dir($fileinfo )){
-                            echo "<td><b>" . $fileinfo . "</b></td>";
+                            echo "<td><b>" . $fileinfo->getFilename() . "/</b></td>";
                         }else{
-                            echo "<td>" . $fileinfo . "</td>";
+                            echo "<td>" . $fileinfo->getFilename() . "</td>";
                         }
                         
                         //check for 777
