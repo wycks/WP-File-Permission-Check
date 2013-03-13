@@ -43,7 +43,7 @@ add_action( 'admin_enqueue_scripts', 'load_admin_scripts_fpc' );
 	function load_admin_scripts_fpc(){
 		if( (is_admin() ) && (isset($_GET['page']) == "perm_check") ){
 			wp_enqueue_style( 'ui', 'http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css');
-            wp_enqueue_script('jquery');
+                        wp_enqueue_script('jquery');
 			wp_enqueue_script('jquery-ui-core');
 			wp_enqueue_script('jquery-ui-tabs');
 			wp_enqueue_script('jquery-ui-widget');
