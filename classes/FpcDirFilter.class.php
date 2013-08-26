@@ -24,6 +24,5 @@
 		{
 			return !($this->isDir() && in_array($this->getFilename(), $this->excludes));
 		}
-
-		
+	
 	}

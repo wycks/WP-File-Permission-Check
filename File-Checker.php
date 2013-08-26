@@ -77,12 +77,11 @@ echo $script_fpc;
 	 * Load menu + function
 	 *
 	 */
+	
+	function load_file_menu_fpc(){
+		add_submenu_page( 'tools.php','File Checker', 'File Checker', 'activate_plugins', 'perm-check', 'main_file_check_fpc');
+	}
 	add_action( 'admin_menu', 'load_file_menu_fpc');
-
-		function load_file_menu_fpc(){
-			add_submenu_page( 'tools.php','File Checker', 'File Checker', 'activate_plugins', 'perm-check', 'main_file_check_fpc');
-		}
-
 
 	/**
 	 * Only run if user has privileges
