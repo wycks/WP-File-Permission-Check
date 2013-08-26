@@ -6,6 +6,8 @@
  * @link       
  *
  *   Exclude directories
+ *
+ * This is not implemented yet, it is passed in the main function for now
  */
 class FpcFileFilter extends RecursiveFilterIterator
 {

@@ -25,37 +25,42 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define( 'FPC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+    /**
+    * WP plugin path
+    */
+    define( 'FPC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+
+    /**
+     * Iterator classes
+     */
+
+    require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveDirectoryIterator.class.php' );
+    require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveIteratorIterator.class.php' );
+    require_once( FPC_PLUGIN_PATH . 'classes/FpcDirFilter.class.php' );
+
+    /**
+     * Enqueue scripts + styles
+     */
+    add_action( 'admin_enqueue_scripts', 'load_admin_scripts_fpc' );
+
+    	function load_admin_scripts_fpc(){
+    		if( (is_admin() ) && (isset($_GET['page']) == "perm_check") ){
+    			wp_enqueue_style( 'ui', 'http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css');
+                wp_enqueue_script('jquery');
+    			wp_enqueue_script('jquery-ui-core');
+    			wp_enqueue_script('jquery-ui-tabs');
+    			wp_enqueue_script('jquery-ui-widget');
+                
+                // add js function to footer after enqueue
+                add_action( 'admin_footer', 'load_tab_script_Fpc' );
+    	    }
+    	}
+
 
 /**
- * Iterator classes
- */
-
-require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveIterator.class.php' );
-require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveIteratorIterator.class.php' );
-require_once( FPC_PLUGIN_PATH . 'classes/FpcDirFilter.class.php' );
-
-/**
- * Enqueue scripts + styles
- */
-add_action( 'admin_enqueue_scripts', 'load_admin_scripts_fpc' );
-
-	function load_admin_scripts_fpc(){
-		if( (is_admin() ) && (isset($_GET['page']) == "perm_check") ){
-			wp_enqueue_style( 'ui', 'http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css');
-                        wp_enqueue_script('jquery');
-			wp_enqueue_script('jquery-ui-core');
-			wp_enqueue_script('jquery-ui-tabs');
-			wp_enqueue_script('jquery-ui-widget');
-
-                 add_action( 'admin_footer', 'load_tab_script_Fpc' );
-	    }
-	}
-
-/**
- * Load tab script
- *
- */
+* Load tab script
+* 
+*/
 function load_tab_script_Fpc() {
 $script_fpc = <<<EOD
 <script>
@@ -68,28 +73,29 @@ echo $script_fpc;
 } 
 
 
-/**
- * Load menu + function
- *
- */
-add_action( 'admin_menu', 'load_file_menu_fpc');
+    /**
+     * Load menu + function
+     *
+     */
+    add_action( 'admin_menu', 'load_file_menu_fpc');
 
-	function load_file_menu_fpc(){
-		add_options_page( 'File Checker', 'File Checker', 'activate_plugins', 'perm_check', 'main_file_check_fpc');
-	}
+    	function load_file_menu_fpc(){
+            add_submenu_page( 'tools.php','File Checker', 'File Checker', 'activate_plugins', 'perm-check', 'main_file_check_fpc');
+    	}
 
 
-/**
- * Main function creates HTML Table
- * @return FpcRecursiveDirectoryReader
- * @return FpcRecursiveDirectoryIteratorReader
- */
-function main_file_check_fpc(){ 
+    /**
+     * Only run if user has privileges
+     *
+     * @return void
+     */    
+    function main_file_check_fpc(){ 
 
-    if (!current_user_can('activate_plugins')) { 
-        wp_die('You do not have sufficient permissions to access this page.');
+        if (!current_user_can('activate_plugins')) { 
+            wp_die('You do not have sufficient permissions to access this page.');
         }
-     ?>
+?>
+
 
 <!-- HTML part -->
  <div class="wrap">
@@ -109,7 +115,7 @@ function main_file_check_fpc(){
  </div>
 
     
-    <form action="<?php echo admin_url( '/options-general.php?page=perm_check'); ?>" method="post">
+    <form action="<?php echo admin_url( '/tools.php?page=perm-check'); ?>" method="post">
         <input class='button-primary' type='submit'  name="submity" value='Run File Check'>
         <?php wp_nonce_field('FpcAction','FpcNonceField'); ?>
     </form>
@@ -140,14 +146,16 @@ function main_file_check_fpc(){
     </thead>
     <tbody>
 
+
     <?php 
 
         if(isset($_POST['submity'])) { 
 
             if (! wp_verify_nonce($_POST['FpcNonceField'],'FpcAction')) wp_die('Security check fail');
 
-            $base = ABSPATH; 
-            $directory = new FpcRecursiveDirectoryReader($base);
+            $dirname   = ABSPATH; 
+            $directory = new FpcRecursiveDirectoryIterator();
+            $directory->fpcScan($dirname);
         }
 
     ?>
@@ -176,8 +184,9 @@ function main_file_check_fpc(){
 
             if (! wp_verify_nonce($_POST['FpcNonceField'],'FpcAction')) wp_die('Security check fail');
 
-            $base = ABSPATH . 'wp-admin'; 
-            $directory = new FpcRecursiveDirectoryIteratorReader($base);
+            $dirname   = ABSPATH . 'wp-admin'; 
+            $directory = new FpcRecursiveDirectoryIteratorIterator();
+            $directory->fpcScansub($dirname);
         }
 
     ?>
@@ -206,8 +215,9 @@ function main_file_check_fpc(){
 
             if (! wp_verify_nonce($_POST['FpcNonceField'],'FpcAction')) wp_die('Security check fail');  
 
-            $base = ABSPATH . 'wp-content'; 
-            $directory = new FpcRecursiveDirectoryIteratorReader($base);
+            $dirname = ABSPATH . 'wp-content'; 
+            $directory = new FpcRecursiveDirectoryIteratorIterator();
+            $directory->fpcScansub($dirname);
         } 
 
     ?>
@@ -236,8 +246,9 @@ function main_file_check_fpc(){
 
             if (! wp_verify_nonce($_POST['FpcNonceField'],'FpcAction')) wp_die('Security check fail');
 
-            $base = ABSPATH . 'wp-includes'; 
-            $directory = new FpcRecursiveDirectoryIteratorReader($base);
+            $dirname = ABSPATH . 'wp-includes'; 
+            $directory = new FpcRecursiveDirectoryIteratorIterator();
+            $directory->fpcScansub($dirname);
         } 
 
     ?>
