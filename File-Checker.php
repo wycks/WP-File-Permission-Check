@@ -25,6 +25,8 @@ License: GPL2
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+	if ( ! defined( 'ABSPATH' ) ) exit;
+	
 	/**
 	* WP plugin path
 	*/
@@ -34,14 +36,14 @@ License: GPL2
 	 * Iterator classes
 	 */
 
-	require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveDirectoryIterator.class.php' );
-	require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveIteratorIterator.class.php' );
-	require_once( FPC_PLUGIN_PATH . 'classes/FpcDirFilter.class.php' );
+	require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveDirectoryIterator.class.php');
+	require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveIteratorIterator.class.php');
+	require_once( FPC_PLUGIN_PATH . 'classes/FpcDirFilter.class.php');
 
 	/**
 	 * Enqueue scripts + styles
 	 */
-	add_action( 'admin_enqueue_scripts', 'load_admin_scripts_fpc' );
+	add_action( 'admin_enqueue_scripts', 'load_admin_scripts_fpc');
 
 		function load_admin_scripts_fpc(){
 			if( (is_admin() ) && (isset($_GET['page']) == "perm_check") ){
@@ -52,7 +54,7 @@ License: GPL2
 				wp_enqueue_script('jquery-ui-widget');
 				
 				// add js function to footer after enqueue
-				add_action( 'admin_footer', 'load_tab_script_Fpc' );
+				add_action( 'admin_footer', 'load_tab_script_fpc');
 			}
 		}
 
@@ -61,7 +63,7 @@ License: GPL2
 * Load tab script
 * 
 */
-function load_tab_script_Fpc() {
+function load_tab_script_fpc() {
 $script_fpc = <<<EOD
 <script>
 jQuery(document).ready(function() {
@@ -107,8 +109,8 @@ echo $script_fpc;
 	<div>
 	<ul>
 		<li><b>This scan is CPU intensive </b>, especially if you have a lot of plugin and theme files.</li>
-		<li>The following files types  are omitted: <i>"jpg", "png", "gif", "jpeg", "ico", "css", "txt", "mo", "po", "svg", "ttf", "woff", "pot".</i></li>
-		<li>The following directory is omitted: <i>"cache"</i></li>
+		<li>The following files types are omitted: <i>"jpg", "png", "gif", "jpeg", "ico", "css", "txt", "mo", "po", "svg", "ttf", "woff", "pot", "eot"</i></li>
+		<li>The following directory are omitted by default: <i>"cache", "objectcache", "pgcache", "dbcache"</i></li>
 		<li>Directories are in <b>Bold</b> - Permissions set to .777 will have a red mark <span style='color:red;'> &#215; </span></li>
 	</ul>
  </div>
@@ -116,7 +118,7 @@ echo $script_fpc;
 	
 	<form action="<?php echo admin_url( '/tools.php?page=perm-check'); ?>" method="post">
 		<input class='button-primary' type='submit'  name="submity" value='Run File Check'>
-		<?php wp_nonce_field('FpcAction','FpcNonceField'); ?>
+		<?php wp_nonce_field('fpc_action','fpc_noncefield'); ?>
 	</form>
 	<br />
 
@@ -149,12 +151,13 @@ echo $script_fpc;
 	<?php 
 
 		if(isset($_POST['submity'])) { 
-
-			if (! wp_verify_nonce($_POST['FpcNonceField'],'FpcAction')) wp_die('Security check fail');
-
-			$dirname   = ABSPATH; 
-			$directory = new FpcRecursiveDirectoryIterator();
-			$directory->fpcScan($dirname);
+			if ( !empty($_POST['submity']) && check_admin_referer( 'fpc_action', 'fpc_noncefield' )) {
+				$dirname   = ABSPATH; 
+				$directory = new FpcRecursiveDirectoryIterator();
+				$directory->fpcScan($dirname);
+			}else{
+				wp_die('Security check fail');		
+			}
 		}
 
 	?>
@@ -179,13 +182,15 @@ echo $script_fpc;
 
 	<?php 
 
-		if(isset($_POST['submity'])) {
-
-			if (! wp_verify_nonce($_POST['FpcNonceField'],'FpcAction')) wp_die('Security check fail');
+		if(isset($_POST['submity'])) { 
+			if ( !empty($_POST['submity']) && check_admin_referer( 'fpc_action', 'fpc_noncefield' )) {
 
 			$dirname   = ABSPATH . 'wp-admin'; 
 			$directory = new FpcRecursiveDirectoryIteratorIterator();
 			$directory->fpcScansub($dirname);
+		}else{
+				wp_die('Security check fail');		
+			}
 		}
 
 	?>
@@ -210,13 +215,15 @@ echo $script_fpc;
 
 	<?php 
 
-		if(isset($_POST['submity'])) {
-
-			if (! wp_verify_nonce($_POST['FpcNonceField'],'FpcAction')) wp_die('Security check fail');  
+		if(isset($_POST['submity'])) { 
+			if ( !empty($_POST['submity']) && check_admin_referer( 'fpc_action', 'fpc_noncefield' )) { 
 
 			$dirname = ABSPATH . 'wp-content'; 
 			$directory = new FpcRecursiveDirectoryIteratorIterator();
 			$directory->fpcScansub($dirname);
+		}else{
+				wp_die('Security check fail');		
+			}
 		} 
 
 	?>
@@ -241,13 +248,15 @@ echo $script_fpc;
 
 	<?php 
 
-		if(isset($_POST['submity'])) {
-
-			if (! wp_verify_nonce($_POST['FpcNonceField'],'FpcAction')) wp_die('Security check fail');
+		if(isset($_POST['submity'])) { 
+			if ( !empty($_POST['submity']) && check_admin_referer( 'fpc_action', 'fpc_noncefield' )) {
 
 			$dirname = ABSPATH . 'wp-includes'; 
 			$directory = new FpcRecursiveDirectoryIteratorIterator();
 			$directory->fpcScansub($dirname);
+		}else{
+				wp_die('Security check fail');		
+			}
 		} 
 
 	?>

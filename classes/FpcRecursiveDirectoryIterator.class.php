@@ -3,12 +3,12 @@
 	 * @package    File Permissions &#38; Size Check
 	 * @author     Wycks
 	 *
-	 *  Used to get root info only since we don't want to recursively iterate from whole root
+	 *  Main Iterator
 	 */
 	class FpcRecursiveDirectoryIterator
 	{
 		/**
-		 *  File types to ignore by extension
+		 *  File types to ignore
 		 * 
 		 * @param array $fileTypes
 		 */
@@ -30,16 +30,15 @@
 
 
 		/**
-		 * Main output method 
+		 * Main Loop
 		 * 
-		 * This should probably be refactored into the template file (File-Checker.php) especially if extended, for now 
-		 * I will stuff it into a big fat class.
+		 *  Checks for filetype and loops through, this function is not recursive
+		 * 
 		 *
 		 * @param string $dirname The directory
-		 * @param array $directoryIterator uses PHP's RecursiveDirectoryIterator 
-		 * @param string $fileinfo output of $directoryIterator array
+		 * @param array $fileinfo output of RecursiveDirectoryIterator Class
 		 * @throws exceptionclass [Error]
-		 * @return  fpcType(), fpcPermissions(), fpcFilesize(), fpcTimestamp()
+		 * @return  fpcOutput
 		 */       
 		public function fpcScan($dirname)
 		{
@@ -56,11 +55,7 @@
 						//remove images and other non important files
 						if (!in_array(strtolower($filetype), $this->fileTypes)) {                   
 
-							$this->fpcType($fileinfo);
-							$this->fpcPermissions($fileinfo);
-							$this->fpcFilesize($fileinfo);
-							$this->fpcTimestamp($fileinfo);
-
+							$this->fpcOutput($fileinfo);								   
 						}               
 					}
 
@@ -71,72 +66,67 @@
 
 
 		/**
+		 * Main Output 
+		 *
+		 * This should probably be refactored into the template file (File-Checker.php) especially if extended.
+		 *
+		 * @param string $fileinfo 
+		 * @return getFilename, fpcPermissions, fpcFilesize, fpcTimestamp
+		 */
+		protected function fpcOutput($fileinfo)
+		{
+			if (is_dir($fileinfo )){
+				echo "<td><b>" . $fileinfo->getFilename() . "/</b></td>";
+			}else{
+				echo "<td>" . '-' . $fileinfo->getFilename() . "</td>";
+			}
+
+			if($this->fpcPermissions($fileinfo) == '0777'){
+				echo "<td>" . $this->fpcPermissions($fileinfo) . "<span class='red' style='color:#FF0000;'> &#215; </span>" . "</td>";
+			} else {
+				echo "<td>" . $this->fpcPermissions($fileinfo) . "</td>";							 
+			}
+	
+			echo "<td>" . $this->fpcFilesize($fileinfo)  . "</td>"; 
+			echo "<td>" . $this->fpcTimestamp($fileinfo) . "</td>";	
+		}
+
+
+		/**
 		 * Output file permissions
 		 *
 		 * @param string $octal human readable octal file format 
-		 * @param string $someString This parameter should contain some string
-		 * @param string $fileinfo output of $directoryIterator array
 		 * @return $octal
 		 */
-		public function fpcPermissions($fileinfo)
+		protected function fpcPermissions($fileinfo)
 		{
-
 			$octal = substr(sprintf('%o', $fileinfo->getPerms()), -4);
-
-			if ($octal == '0777') {
-				echo "<td>" . $octal . "<span class='red' style='color:#FF0000;'> &#215; </span>" . "</td>";
-			} else {
-				echo "<td>" . $octal . "</td>";
-			} 
+			return $octal;	
 		}
+
 
 		/**
 		 * Output file timestamp for last modified
 		 *
-		 * @param string $fileinfo output of $directoryIterator array
 		 * @param string $timestamp last modified time
 		 * @return $timestamp
 		 */
-		public function fpcTimestamp($fileinfo)
+		protected function fpcTimestamp($fileinfo)
 		{
-			//outout last modified time
 			$timestamp = date("F j, Y, g:i a", $fileinfo->getMTime());
-
-			echo "<td>" . $timestamp . "</td>";
+			return $timestamp;
 		}
 
 
 		/**
 		 * Output file size in KB
 		 *
-		 * @param string $fileinfo output of $directoryIterator array
 		 * @param string $filesize gets file size
 		 * @return $filesize
 		 */
-		public function fpcFilesize($fileinfo)
+		protected function fpcFilesize($fileinfo)
 		{
-			//output file sizes
 			$filesize = number_format($fileinfo->getSize() / 1024, 2) . " KB";
-
-			echo "<td>" . $filesize . "</td>";
+			return $filesize;		
 		}
-
-
-		/**
-		 * Output file name and checks for type (dir or file)
-		 *
-		 *
-		 * @param string $fileinfo output of $directoryIterator array
-		 * @return getFilename()
-		 */
-		 public function fpcType($fileinfo)
-		{
-			 //check if it's a dir or a file
-			if (is_dir($fileinfo )){
-				echo "<td><b>" . $fileinfo->getFilename() . "/</b></td>";
-			}else{
-				echo "<td>" . $fileinfo->getFilename() . "</td>";
-			}
-		}
-
 	}

@@ -10,16 +10,15 @@
 	class FpcRecursiveDirectoryIteratorIterator extends FpcRecursiveDirectoryIterator
 	{
 		/**
-		 * Main output method for subdirectory
+		 * Main output method for recursive subdirectory iteration
 		 * 
-		 * This should probably be refactored into the template file (File-Checker.php) especially if extended, for now it will stuff it into a big fat class.
 		 * 
 		 * @param string $dirname The subdirectory
-		 * @param array $directoryIterator uses PHP's RecursiveDirectoryIterator 
-		 * @param array $filtered uses FpcDirFilter to filter out cache or heavy folders we don't want to scan
+		 * @param array $directoryIterator uses PHP's RecursiveDirectoryIterator Class
+		 * @param array $filteredIterator uses FpcDirFilter Class to filter out cache or heavy folders we don't want to scan
 		 * @param array $megaIterator uses PHP's RecursiveIteratorIterator
 		 * @throws exceptionclass [Error]
-		 * @return  fpcType(), fpcPermissions(), fpcFilesize(), fpcTimestamp()
+		 * @return  fpcOutput
 		 */       
 		public function fpcScansub($dirname)
 		{    
@@ -28,8 +27,8 @@
 				 //$directoryIterator = new RecursiveDirectoryIterator($dirname, RecursiveDirectoryIterator::SKIP_DOTS);
 				
 				$directoryIterator = new RecursiveDirectoryIterator($dirname);
-				$filtered = new FpcDirFilter($directoryIterator);
-				$megaIterator = new RecursiveIteratorIterator($filtered, RecursiveIteratorIterator::SELF_FIRST);
+				$filteredIterator = new FpcDirFilter($directoryIterator);
+				$megaIterator = new RecursiveIteratorIterator($filteredIterator, RecursiveIteratorIterator::SELF_FIRST);
 
 				foreach ($megaIterator as $fileinfo) {
 
@@ -39,10 +38,7 @@
 					//remove images and other non important files
 					if (!in_array(strtolower($filetype), $this->fileTypes)) {                   
 
-						$this->fpcType($fileinfo);
-						$this->fpcPermissions($fileinfo);
-						$this->fpcFilesize($fileinfo);
-						$this->fpcTimestamp($fileinfo);        
+						$this->fpcOutput($fileinfo);		 
 					}                 
 				}
 
@@ -50,5 +46,4 @@
 			  print "Error: " . $e->getMessage();
 			}
 		}
-
 	}
