@@ -5,11 +5,11 @@ Plugin URI: http://www.wpsecure.net/
 Description: Checks WordPress file permissions, file size and last modified date
 Author: Wycks
 Author URI: http://wordpress.org/extend/plugins/profile/wycks
-Version: 1.0.5
+Version: 1.0.6
 License: GPL2
 ****/
 
-/*  Copyright 2011  Wycks  (email : info@wpsecure.net)
+/*  Copyright 2011  Wycks  (https://twitter.com/wycks_s)
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License, version 2, as 
@@ -27,36 +27,38 @@ License: GPL2
 
 	if ( ! defined( 'ABSPATH' ) ) exit;
 	
+
 	/**
 	* WP plugin path
 	*/
 	define( 'FPC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
+
 	/**
 	 * Iterator classes
 	 */
-
 	require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveDirectoryIterator.class.php');
 	require_once( FPC_PLUGIN_PATH . 'classes/FpcRecursiveIteratorIterator.class.php');
 	require_once( FPC_PLUGIN_PATH . 'classes/FpcDirFilter.class.php');
+	require_once( FPC_PLUGIN_PATH . 'classes/FpcLoop.class.php');
+
 
 	/**
 	 * Enqueue scripts + styles
 	 */
 	add_action( 'admin_enqueue_scripts', 'load_admin_scripts_fpc');
 
-		function load_admin_scripts_fpc(){
-			if( (is_admin() ) && (isset($_GET['page']) == "perm_check") ){
-				wp_enqueue_style( 'ui', 'http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css');
-				wp_enqueue_script('jquery');
-				wp_enqueue_script('jquery-ui-core');
-				wp_enqueue_script('jquery-ui-tabs');
-				wp_enqueue_script('jquery-ui-widget');
+	function load_admin_scripts_fpc(){
+		if( (is_admin() ) && (isset($_GET['page']) == "perm_check") ){
+			wp_enqueue_style( 'ui', 'http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css');
+			wp_enqueue_script('jquery');
+			wp_enqueue_script('jquery-ui-core');
+			wp_enqueue_script('jquery-ui-tabs');
+			wp_enqueue_script('jquery-ui-widget');
 				
-				// add js function to footer after enqueue
-				add_action( 'admin_footer', 'load_tab_script_fpc');
-			}
+			add_action( 'admin_footer', 'load_tab_script_fpc');
 		}
+	}
 
 
 /**
@@ -78,16 +80,15 @@ echo $script_fpc;
 	/**
 	 * Load menu + function
 	 *
-	 */
-	
+	 */	
 	function load_file_menu_fpc(){
 		add_submenu_page( 'tools.php','File Checker', 'File Checker', 'activate_plugins', 'perm-check', 'main_file_check_fpc');
 	}
 	add_action( 'admin_menu', 'load_file_menu_fpc');
 
+
 	/**
 	 * Only run if user has privileges
-	 *
 	 * @return void
 	 */    
 	function main_file_check_fpc(){ 
@@ -149,17 +150,10 @@ echo $script_fpc;
 
 
 	<?php 
-
-		if(isset($_POST['submity'])) { 
-			if ( !empty($_POST['submity']) && check_admin_referer( 'fpc_action', 'fpc_noncefield' )) {
-				$dirname   = ABSPATH; 
-				$directory = new FpcRecursiveDirectoryIterator();
-				$directory->fpcScan($dirname);
-			}else{
-				wp_die('Security check fail');		
-			}
-		}
-
+		// loop for the root folder ABSPATH
+		$dirname   = ABSPATH;
+		$directory = new FpcLoop();
+		$directory ->fpcRoot($dirname);
 	?>
 
 	</tbody>
@@ -181,18 +175,10 @@ echo $script_fpc;
 	<tbody>
 
 	<?php 
-
-		if(isset($_POST['submity'])) { 
-			if ( !empty($_POST['submity']) && check_admin_referer( 'fpc_action', 'fpc_noncefield' )) {
-
-			$dirname   = ABSPATH . 'wp-admin'; 
-			$directory = new FpcRecursiveDirectoryIteratorIterator();
-			$directory->fpcScansub($dirname);
-		}else{
-				wp_die('Security check fail');		
-			}
-		}
-
+		// loop for the wp-admin folder 
+		$dirname   = ABSPATH . 'wp-admin';
+		$directory = new FpcLoop();
+		$directory ->fpcDir($dirname); 
 	?>
 
 	</tbody>
@@ -214,18 +200,10 @@ echo $script_fpc;
 	<tbody>
 
 	<?php 
-
-		if(isset($_POST['submity'])) { 
-			if ( !empty($_POST['submity']) && check_admin_referer( 'fpc_action', 'fpc_noncefield' )) { 
-
-			$dirname = ABSPATH . 'wp-content'; 
-			$directory = new FpcRecursiveDirectoryIteratorIterator();
-			$directory->fpcScansub($dirname);
-		}else{
-				wp_die('Security check fail');		
-			}
-		} 
-
+		// loop for the wp-content folder 
+		$dirname = ABSPATH . 'wp-content'; 
+		$directory = new FpcLoop();
+		$directory ->fpcDir($dirname); 
 	?>
 
 	</tbody>
@@ -247,18 +225,10 @@ echo $script_fpc;
 	<tbody>
 
 	<?php 
-
-		if(isset($_POST['submity'])) { 
-			if ( !empty($_POST['submity']) && check_admin_referer( 'fpc_action', 'fpc_noncefield' )) {
-
-			$dirname = ABSPATH . 'wp-includes'; 
-			$directory = new FpcRecursiveDirectoryIteratorIterator();
-			$directory->fpcScansub($dirname);
-		}else{
-				wp_die('Security check fail');		
-			}
-		} 
-
+		// loop for the wp-includes folder 
+		$dirname = ABSPATH . 'wp-includes';
+		$directory = new FpcLoop();
+		$directory ->fpcDir($dirname); 
 	?>
 
 	</tbody>
